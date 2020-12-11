@@ -4,7 +4,10 @@
 # References:
 #   https://www.kaggle.com/grouby/dobble-card-images
 #
-
+# Dependencies:
+#
+# Kaggle:
+# python3 -m pip install kaggle
 
 import cv2
 import numpy as np
@@ -14,11 +17,17 @@ import numpy as np
 
 import os
 import gc
+import zipfile
 
 
 #
 # Parameters
 #
+
+# Replace the following username with the one from the json file for your Kaggle API Token
+os.environ['KAGGLE_USERNAME'] = "aidventure"
+# Replace this key with the one from the json file for your Kaggle API Token
+os.environ['KAGGLE_KEY'] = "36f92c166af715c1943acbaeb07e18d7"
 
 dir = './dobble_dataset'
 #dir = './kaggle/input/dobble-card-images'
@@ -28,6 +37,16 @@ ncols = 146
 #ncols = 224
 
 nchannels = 3
+
+# Verify that the dataset directory is present, otherwise download it from Kaggle.
+if not os.path.isdir(dir):
+    print("Downloading workable dataset...")
+    # Download the official image set used for network training and validation
+    os.system("kaggle datasets download -d grouby/dobble-card-images")
+    with zipfile.ZipFile('dobble-card-images.zip', 'r') as zip_ref:
+        zip_ref.extractall(dir)
+else:
+    print("Found local dataset for training and validation:", dir)
 
 print("")
 print("PARAMETERS:")
