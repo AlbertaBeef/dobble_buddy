@@ -235,8 +235,8 @@ print("... press any key to continue (ESC to quit) ...")
 
 for i in range(100):
 #for i in range(10):
-    idx1 = random.randrange(0,ntrain+1)
-    idx2 = random.randrange(0,ntrain+1)
+    idx1 = random.randrange(0,ntrain)
+    idx2 = random.randrange(0,ntrain)
     #print(idx1,idx2)
     card1_X = train_X[idx1,:,:,:]
     card1_y = train_y[idx1]
