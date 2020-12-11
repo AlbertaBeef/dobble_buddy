@@ -188,7 +188,9 @@ with open(dir+'/dobble_symbols.txt','r') as file:
     reader = csv.reader(file)
     for row in reader:
         #print(row)
-        if row[0] == '\ufeff1': # what the heck is this ?
+        if row[0] == '\ufeff1': # wierd character occuring on linux
+            row[0] = '1'
+        if row[0] == 'ï»¿1': # wierd character occuring on windows
             row[0] = '1'
         symbol_id = int(row[0])
         symbol_label = row[1]
@@ -204,7 +206,9 @@ with open(dir+'/dobble_card_symbol_mapping.txt','r') as file:
     reader = csv.reader(file)
     for row in reader:
         id = row[0]
-        if row[0] == '\ufeff1': # what the heck is this ?
+        if row[0] == '\ufeff1': # wierd character occuring on linux
+            row[0] = '1'
+        if row[0] == 'ï»¿1': # wierd character occuring on windows
             row[0] = '1'
         card_id = int(row[0])
         card_mapping = []
