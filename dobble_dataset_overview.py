@@ -20,8 +20,9 @@ import gc
 # Parameters
 #
 
-dir = './dobble_dataset'
-#dir = './kaggle/input/dobble-card-images'
+#dir = '/dobble_dataset' # mac/linux
+dir = r'C:/Users/044560/Documents/DobbleKickstarter/dobble_buddy/dobble_dataset' # windows
+
 nrows = 146
 ncols = 146
 #nrows = 224
