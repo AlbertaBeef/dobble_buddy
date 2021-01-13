@@ -30,32 +30,32 @@ ncols = 224
 
 nchannels = 3
 
-# card_decks = [
-#     'dobble_deck01_cards_57',
-#     'dobble_deck02_cards_55',
-#     'dobble_deck03_cards_55',
-#     'dobble_deck04_cards_55',
-#     'dobble_deck05_cards_55',
-#     'dobble_deck06_cards_55',
-#     'dobble_deck07_cards_55',
-#     'dobble_deck08_cards_55',
-#     'dobble_deck09_cards_55',
-#     'dobble_deck10_cards_55'
-#     ]
-
-# augmented card decks
 card_decks = [
-    'dobble_deck01_cards_57-augmented',
-    'dobble_deck02_cards_55-augmented',
-    'dobble_deck03_cards_55-augmented',
-    'dobble_deck04_cards_55-augmented',
-    'dobble_deck05_cards_55-augmented',
-    'dobble_deck06_cards_55-augmented',
-    'dobble_deck07_cards_55-augmented',
-    'dobble_deck08_cards_55-augmented',
-    'dobble_deck09_cards_55-augmented',
-    'dobble_deck10_cards_55-augmented'
+    'dobble_deck01_cards_57',
+    'dobble_deck02_cards_55',
+    'dobble_deck03_cards_55',
+    'dobble_deck04_cards_55',
+    'dobble_deck05_cards_55',
+    'dobble_deck06_cards_55',
+    'dobble_deck07_cards_55',
+    'dobble_deck08_cards_55',
+    'dobble_deck09_cards_55',
+    'dobble_deck10_cards_55'
     ]
+
+# # augmented card decks
+# card_decks = [
+#     'dobble_deck01_cards_57-augmented',
+#     'dobble_deck02_cards_55-augmented',
+#     'dobble_deck03_cards_55-augmented',
+#     'dobble_deck04_cards_55-augmented',
+#     'dobble_deck05_cards_55-augmented',
+#     'dobble_deck06_cards_55-augmented',
+#     'dobble_deck07_cards_55-augmented',
+#     'dobble_deck08_cards_55-augmented',
+#     'dobble_deck09_cards_55-augmented',
+#     'dobble_deck10_cards_55-augmented'
+#     ]
 nb_card_decks = len(card_decks)
 print("")
 print("PARAMETERS:")
@@ -174,25 +174,25 @@ print("")
 print("TRAIN MODEL:")
 
 train_datagen = ImageDataGenerator( 
-	rescale=1./255,
-	rotation_range=360, 
-	horizontal_flip=True 
-	)
+    rescale=1./255,
+    rotation_range=360, 
+    horizontal_flip=True 
+    )
 val_datagen   = ImageDataGenerator( 
-	rescale=1./255
-	)
+    rescale=1./255
+    )
 
 
 train_generator = train_datagen.flow(train_X,train_y,batch_size=batch_size)
 val_generator = val_datagen.flow(val_X,val_y,batch_size=batch_size)
 
 history = model.fit(
-	train_generator,
-	steps_per_epoch=int(ntrain/batch_size),
-	epochs=nepochs,
-	validation_data=val_generator,
-	validation_steps=int(nval/batch_size)
-	)
+    train_generator,
+    steps_per_epoch=int(ntrain/batch_size),
+    epochs=nepochs,
+    validation_data=val_generator,
+    validation_steps=int(nval/batch_size)
+    )
 
 model.save_weights('dobble_model_weights.h5')
 model.save('dobble_model.h5')

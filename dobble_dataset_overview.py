@@ -19,9 +19,7 @@ import gc
 #
 # Parameters
 #
-
-#dir = '/dobble_dataset' # mac/linux
-dir = r'C:/Users/044560/Documents/DobbleKickstarter/dobble_buddy/dobble_dataset' # windows
+dir = './dobble_dataset'
 
 nrows = 146
 ncols = 146
