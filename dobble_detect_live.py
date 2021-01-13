@@ -49,6 +49,8 @@ displayReference = True
 captureAll = False
 output_dir = './output'
 
+if not os.path.exists(output_dir):      
+    os.mkdir(output_dir)            # Create the output directory if it doesn't already exist
 
 def set_minRadius(*arg):
     global circle_minRadius
@@ -143,6 +145,7 @@ print("\tPress ESC to quit ...")
 print("\tPress 'p' to pause video ...")
 print("\tPress 'c' to continue ...")
 print("\tPress 's' to step one frame at a time ...")
+print("\tPress 'w' to take a photo ...")
 print("================================")
 
 step = False
@@ -290,4 +293,3 @@ while True:
 
     if key == 27:
         break
-
