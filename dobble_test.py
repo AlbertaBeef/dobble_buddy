@@ -37,7 +37,6 @@ def read_and_process_image(list_of_images):
         y.append(int(y_str[len(y_str)-2]))
     return X,y
 
-
 def test_accuracy(model, test_n, test_X, test_y):
     ntotal = 0
     ncorrect = 0
@@ -52,8 +51,7 @@ def test_accuracy(model, test_n, test_X, test_y):
             ncorrect += 1
     return ncorrect/ntotal
 
-
-# Error bounds predict 
+#  predict Error bounds
 _zValues = { .5:.67, .68:1.0, .8:1.28, .9:1.64, .95:1.96, .98:2.33, .99:2.58 }
 
 def get_accuracy_bounds(mean, sampleSize, confidence):
@@ -62,54 +60,50 @@ def get_accuracy_bounds(mean, sampleSize, confidence):
 
     if sampleSize <= 0:
         raise UserWarning("sampleSize should be positive")
-
+        
     # lookup the zValue depending on the confidence
     zvalue = _zValues.get(confidence)
-
     # get the standard deviation
     stdev = math.sqrt( (mean * (1 - mean)) / sampleSize) 
-    print(stdev)
-    # print("standard deviation = %.4f" % stdev)
     # multiply the standard deviation by the zvalue
     interval = zvalue * stdev
-    # print("interval = %.2f" % interval)
     lower = mean - interval
     upper = mean + interval
-    #print("Stub GetAccuracyBounds in ", __file__)
     return (lower, upper)
 
+test_dir = './dobble_dataset/dobble_test01_cards'
+# test_dir = './dobble_dataset/dobble_test02_cards' uncomment to use dataset 2
 
-test1_dir = './dobble_dataset/dobble_test01_cards'
-test1_cards = capture_card_filenames(test1_dir)
-test_set_size = len(test1_cards)
-np.random.shuffle(test1_cards)
+test_cards = capture_card_filenames(test_dir)
+test_set_size = len(test_cards)
+np.random.shuffle(test_cards)
 
-test1_X,test1_y = read_and_process_image(test1_cards)
-del test1_cards
+test_X,test_y = read_and_process_image(test_cards)
+del test_cards
 
-ntest1 = len(test1_y)
+ntest = len(test_y)
 
-test1_X = np.array(test1_X)
-test1_y = np.array(test1_y)
+test_X = np.array(test_X)
+test_y = np.array(test_y)
 
 # normalize images
-test1_X = test1_X * (1./255)
+test_X = test_X * (1./255)
 
 # convert labels in range 0-57 to one-hot encoding
-test1_y = to_categorical(test1_y,58)
+test_y = to_categorical(test_y,58)
 
-print("Shape of test1 data (X) is :", test1_X.shape)
-print("Shape of test1 data (y) is :", test1_y.shape)
+print("Shape of test data (X) is :", test_X.shape)
+print("Shape of test data (y) is :", test_y.shape)
 
 
 print("")
 print("EVALUATE MODEL:")
-model.evaluate(test1_X,test1_y)
+model.evaluate(test_X,test_y)
 
-test1_accuracy = test_accuracy(model,ntest1,test1_X,test1_y)
-print(test1_dir," : Test Accuracy = ", test1_accuracy)
+test_accuracy = test_accuracy(model,ntest,test_X,test_y)
+print(test_dir," : Test Accuracy = ", test_accuracy)
 
 
 for confidence in [.5, .8, .9, .95, .99]:
-    (lowerBound, upperBound) = get_accuracy_bounds(test1_accuracy, test_set_size, confidence)    
+    (lowerBound, upperBound) = get_accuracy_bounds(test_accuracy, test_set_size, confidence)    
     print(" %.2f%% accuracy bound: %.4f - %.4f" % (confidence, lowerBound, upperBound))
