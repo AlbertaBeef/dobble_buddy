@@ -1,8 +1,12 @@
 # dobble_buddy
-Getting Started with Machine Learning for the Dobble Card Game using TensorFlow
+Check out these in-depth tutorials which are published on the Hackster.io community site:
 
-Check out our Kickstarter project and consider making a pledge to help accelerate our work towards making AI and Machine Learning something fun for everyday people.  Have fun in the process of learning more about this amazing area of growth:
+## The Dobble Challenge
+Getting started with machine learning for the Dobble card game using TensorFlow.
+https://www.hackster.io/aidventure/the-dobble-challenge-93d57c
 
-https://www.kickstarter.com/projects/kevinkeryk/dobble-buddy
+## Training The Dobble Challenge
+Train a machine learning model that can play Dobble (Spot-It) against you. This is part two of The Dobble Challenge.
+https://www.hackster.io/aiadventure/training-the-dobble-challenge-568854
 
-Look for our in-depth tutorial to be published over the next few weeks on Hackster.io (crowdfunding pledges of $20 or more will get you early access to the tutorial ahead of its public release)
+Look for additional tutorials in the coming weeks!
