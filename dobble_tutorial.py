@@ -1,21 +1,25 @@
 #
-# Dobble Budday - Training tutorial
+# Dobble Buddy - Training tutorial
 #
 # References:
 #   https://www.kaggle.com/grouby/dobble-card-images
 #
 # Dependencies:
+#   numpy
+#   cv2
+#   os
+#   csv
+#   collections
 #
 
-import cv2
 import numpy as np
-
-#import matplotlib.pyplot as plt
-#%matplotlib inline
+import cv2
 
 import os
 import random
 import gc
+
+import dobble_utils as db
 
 #
 # Parameters
@@ -66,18 +70,10 @@ print("Card Decks : ", nb_card_decks, card_decks)
 # Capture images/labels from data set for training and testing
 #
 
-def capture_card_filenames(directory_name):
-    subdirs = ['{}/{}'.format(directory_name,i) for i in os.listdir(directory_name) ]
-    cards = []
-    for i,subdir in enumerate(subdirs):
-        cards += ['{}/{}'.format(subdir,i) for i in os.listdir(subdir)]
-    del subdirs
-    return cards
-
 train_cards = []
 for d in range(0,nb_card_decks):
     train_dir = dir+'/'+card_decks[d]
-    train_cards.append( capture_card_filenames(train_dir) )
+    train_cards.append( db.capture_card_filenames(train_dir) )
 
 
 gc.collect()
@@ -86,20 +82,11 @@ gc.collect()
 # Read images and pre-process to fixed size
 #
 
-def read_and_process_image(list_of_images):
-    X = []
-    y = []
-    
-    for i,image in enumerate(list_of_images):
-        X.append(cv2.resize(cv2.imread(image,cv2.IMREAD_COLOR),(nrows,ncols), interpolation=cv2.INTER_CUBIC))
-        y_str = image.split('/')
-        y.append(int(y_str[len(y_str)-2]))
-    return X,y
 
 train_X = []
 train_y = []
 for d in range(0,nb_card_decks):
-   X,y = read_and_process_image(train_cards[d])
+   X,y = db.read_and_process_image(train_cards[d],nrows,ncols)
    train_X.append( np.array(X) )
    train_y.append( np.array(y) )
 
@@ -163,7 +150,6 @@ model.add(layers.Activation('relu'))
 model.add(layers.Dense(58))
 model.add(layers.Activation('softmax'))
 
-#model.compile(loss='binary_crossentropy',optimizer=optimizers.RMSprop(lr=1e-4),metrics=['acc'])
 model.compile(loss='categorical_crossentropy',optimizer='adam')
 
 print("")
@@ -201,50 +187,38 @@ model.save('dobble_model.h5')
 # Test Model Accuracy
 #
 
-def test_accuracy(model, test_n, test_X, test_y):
-    ntotal = 0
-    ncorrect = 0
-    predictions = model.predict(test_X)
-    for i in range(test_n):
-        y = test_y[i,:]
-        pred = predictions[i,:]
-        max_y = np.argmax(y)
-        max_pred = np.argmax(pred)
-        ntotal += 1
-        if max_pred == max_y:
-            ncorrect += 1
-    return ncorrect/ntotal
-
 model.summary()
 
-test1_dir = './dobble_dataset/dobble_test01_cards'
-test1_cards = capture_card_filenames(test1_dir)
-random.shuffle(test1_cards)
+test_dir = './dobble_dataset/dobble_test01_cards'
+#test_dir = './dobble_dataset/dobble_test02_cards'
 
-test1_X,test1_y = read_and_process_image(test1_cards)
-del test1_cards
+test_cards = db.capture_card_filenames(test_dir)
+random.shuffle(test_cards)
 
-ntest1 = len(test1_y)
+test_X,test_y = db.read_and_process_image(test_cards,nrows,ncols)
+del test_cards
 
-test1_X = np.array(test1_X)
-test1_y = np.array(test1_y)
+ntest = len(test_y)
+
+test_X = np.array(test_X)
+test_y = np.array(test_y)
 
 # normalize images
-test1_X = test1_X * (1./255)
+test_X = test_X * (1./255)
 
 # convert labels in range 0-57 to one-hot encoding
-test1_y = to_categorical(test1_y,58)
+test_y = to_categorical(test_y,58)
 
-print("Shape of test1 data (X) is :", test1_X.shape)
-print("Shape of test1 data (y) is :", test1_y.shape)
+print("Shape of test data (X) is :", test_X.shape)
+print("Shape of test data (y) is :", test_y.shape)
 
 
 print("")
 print("EVALUATE MODEL:")
-model.evaluate(test1_X,test1_y)
+model.evaluate(test_X,test_y)
 
-test1_accuracy = test_accuracy(model,ntest1,test1_X,test1_y)
-print(test1_dir," : Test Accuracy = ", test1_accuracy)
+test_accuracy = db.test_accuracy(model,ntest,test_X,test_y)
+print(test_dir," : Test Accuracy = ", test_accuracy)
 
 
 
