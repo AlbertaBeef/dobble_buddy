@@ -51,7 +51,7 @@ print("Card Decks : ", nb_card_decks, card_decks)
 #
 
 def capture_card_filenames(directory_name):
-    subdirs = ['{}/{}'.format(directory_name,i) for i in os.listdir(directory_name) ]
+    subdirs = ['{}/{}'.format(directory_name,i) for i in sorted(os.listdir(directory_name)) ]
     cards = []
     for i,subdir in enumerate(subdirs):
         cards += ['{}/{}'.format(subdir,i) for i in os.listdir(subdir)]

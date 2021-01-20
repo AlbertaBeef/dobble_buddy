@@ -41,8 +41,8 @@ text_lineType = cv2.LINE_AA
 matching_x = int(10*scale)
 matching_y = int(20*scale)
 
-#input_video = 0 # laptop camera
-input_video = 1 # USB webcam
+input_video = 0 # laptop camera
+#input_video = 1 # USB webcam
 
 displayReference = True
 
