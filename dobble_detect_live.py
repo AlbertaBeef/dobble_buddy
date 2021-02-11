@@ -18,6 +18,10 @@ import keras
 from keras.models import load_model
 from keras.utils import to_categorical
 
+from imutils.video import FPS
+
+import dobble_utils as db
+
 # Parameters (tweaked for video)
 dir = './dobble_dataset'
 
@@ -82,62 +86,13 @@ print("camera",input_video," (",frame_width,",",frame_height,")")
 model = load_model('dobble_model.h5')
 
 # Load reference images
-def capture_card_filenames(directory_name):
-    subdirs = ['{}/{}'.format(directory_name,i) for i in os.listdir(directory_name) ]
-    cards = []
-    for i,subdir in enumerate(subdirs):
-        cards += ['{}/{}'.format(subdir,i) for i in os.listdir(subdir)]
-    del subdirs
-    return cards
-
-def read_and_process_image(list_of_images):
-    X = []
-    y = []
-    
-    for i,image in enumerate(list_of_images):
-        X.append(cv2.resize(cv2.imread(image,cv2.IMREAD_COLOR),(0,0),fx=0.5,fy=0.5,interpolation=cv2.INTER_CUBIC))
-        y_str = image.split('/')
-        y.append(int(y_str[len(y_str)-2]))
-    return X,y
-
-
 train1_dir = dir+'/dobble_deck01_cards_57'
-train1_cards = capture_card_filenames(train1_dir)
-train1_X,train1_y = read_and_process_image(train1_cards)
-
+train1_cards = db.capture_card_filenames(train1_dir)
+train1_X,train1_y = db.read_and_process_image(train1_cards,72,72)
 
 # Load mapping/symbol databases
-import csv
-from collections import OrderedDict
-
-symbols = OrderedDict()
-with open(dir+'/dobble_symbols.txt','r') as file:
-    reader = csv.reader(file)
-    for row in reader:
-        #print(row)
-        if row[0] == '\ufeff1': # wierd character occuring on linux
-            row[0] = '1'
-        if row[0] == 'ï»¿1': # wierd character occuring on windows
-            row[0] = '1'
-        symbol_id = int(row[0])
-        symbol_label = row[1]
-        symbols[symbol_id] = symbol_label
-
-mapping = OrderedDict()
-with open(dir+'/dobble_card_symbol_mapping.txt','r') as file:
-    reader = csv.reader(file)
-    for row in reader:
-        id = row[0]
-        if row[0] == '\ufeff1': # wierd character occuring on linux
-            row[0] = '1'
-        if row[0] == 'ï»¿1': # wierd character occuring on windows
-            row[0] = '1'
-        card_id = int(row[0])
-        card_mapping = []
-        for i,val in enumerate(row[1:]):
-            if val=='1':
-                card_mapping.append( i+1 )
-        mapping[card_id] = card_mapping
+symbols = db.load_symbol_labels(dir+'/dobble_symbols.txt')
+mapping = db.load_card_symbol_mapping(dir+'/dobble_card_symbol_mapping.txt')
 
 print("================================")
 print("Dobble Classification Demo:")
@@ -159,6 +114,8 @@ card_list = []
 
 frame_count = 0
 
+# start the FPS counter
+fps = FPS().start()
     
 while True:
     #if cap.grab():
@@ -213,18 +170,19 @@ while True:
                         card_id  = np.argmax(card_y[0])
                         cv2.putText(output,str(card_id),(x1,y1-b),text_fontType,text_fontSize,text_color,text_lineSize,text_lineType)
                         
-                        if displayReference:
-                            reference_img = train1_X[card_id-1]
-                            reference_shape = reference_img.shape
-                            reference_x = reference_shape[0]
-                            reference_y = reference_shape[1]
-                            output[y1:y1+reference_y,x1:x1+reference_x,:] = reference_img
-                        
                         # Add ROI to card/bbox lists
                         if card_id > 0:
                             circle_list.append((cx,cy,r))
                             bbox_list.append((x1,y1,x2,y2))
                             card_list.append(card_id)
+
+                            if displayReference:
+                                reference_img = train1_X[card_id-1]
+                                reference_shape = reference_img.shape
+                                reference_x = reference_shape[0]
+                                reference_y = reference_shape[1]
+                                output[y1:y1+reference_y,x1:x1+reference_x,:] = reference_img
+                        
                     except:
                         print("ERROR : Exception occured during dobble classification ...")
 
@@ -293,3 +251,17 @@ while True:
 
     if key == 27:
         break
+
+    # Update the FPS counter
+    fps.update()
+
+
+
+
+# Stop the timer and display FPS information
+fps.stop()
+print("[INFO] elapsed time: {:.2f}".format(fps.elapsed()))
+print("[INFO] elapsed FPS: {:.2f}".format(fps.fps()))
+
+# Cleanup
+cv2.destroyAllWindows()
