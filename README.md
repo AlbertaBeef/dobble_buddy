@@ -18,7 +18,7 @@ Train a machine learning model that can play Dobble (Spot-It) against you. This 
 
 
 # Deployment
-The following tutorials target the dobble classifier to the edge on various platforms.
+The following tutorials target the Dobble Buddy to the edge on various platforms.
 
 ## Run the Dobble Challenge on MaaXBoard
 Deploying the Dobble Buddy on the edge with the MaaXBoard.
