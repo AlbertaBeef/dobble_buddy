@@ -76,8 +76,10 @@ cv2.createTrackbar('maxRadius', 'Dobble Classification', circle_maxRadius, circl
 
 # Open video
 cap = cv2.VideoCapture(input_video)
-cap.set(cv2.CAP_PROP_FRAME_WIDTH,640)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT,480)
+frame_width = 640
+frame_height = 480
+cap.set(cv2.CAP_PROP_FRAME_WIDTH,frame_width)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT,frame_height)
 frame_width = int(round(cap.get(cv2.CAP_PROP_FRAME_WIDTH)))
 frame_height = int(round(cap.get(cv2.CAP_PROP_FRAME_HEIGHT)))
 print("camera",input_video," (",frame_width,",",frame_height,")")
@@ -116,8 +118,21 @@ frame_count = 0
 
 # start the FPS counter
 fps = FPS().start()
+
+# init the real-time FPS counter
+rt_fps_count = 0
+rt_fps_time = cv2.getTickCount()
+rt_fps_valid = False
+rt_fps = 0.0
+rt_fps_message = "FPS: {0:.2f}".format(rt_fps)
+rt_fps_x = int(10*scale)
+rt_fps_y = int((frame_height-10)*scale)
     
 while True:
+    # init the real-time FPS counter
+    if rt_fps_count == 0:
+        rt_fps_time = cv2.getTickCount()
+
     #if cap.grab():
     if True:
         frame_count = frame_count + 1
@@ -207,6 +222,10 @@ while True:
                 print(matching_text)
                 cv2.putText(output,matching_text,(matching_x,matching_y),text_fontType,text_fontSize,text_color,text_lineSize,text_lineType)                
 
+            # display real-time FPS counter (if valid)
+            if rt_fps_valid == True:
+                cv2.putText(output,rt_fps_message, (rt_fps_x,rt_fps_y),text_fontType,text_fontSize,text_color,text_lineSize,text_lineType)
+            
             # show the output image
             #img1 = np.hstack([image, output])
             #img2 = np.hstack([cv2.merge([gray1,gray1,gray1]), cv2.merge([gray2,gray2,gray2])])
@@ -255,6 +274,15 @@ while True:
     # Update the FPS counter
     fps.update()
 
+    # Update the real-time FPS counter
+    rt_fps_count = rt_fps_count + 1
+    if rt_fps_count == 10:
+        t = (cv2.getTickCount() - rt_fps_time)/cv2.getTickFrequency()
+        rt_fps_valid = 1
+        rt_fps = 10.0/t
+        rt_fps_message = "FPS: {0:.2f}".format(rt_fps)
+        #print("[INFO] ",rt_fps_message)
+        rt_fps_count = 0
 
 
 
