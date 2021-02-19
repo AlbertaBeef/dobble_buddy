@@ -155,7 +155,11 @@ for i in range(100):
     card2_X = train_X[idx2,:,:,:]
     card2_y = train_y[idx2]
     if ( card1_y == card2_y ):
-        continue;
+        continue
+    if ( card1_y == 0 ) :
+        continue
+    if ( card2_y == 0 ) :
+        continue
 
     card1_mapping = mapping[card1_y]
     card2_mapping = mapping[card2_y]
